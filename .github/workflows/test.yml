@@ -74,6 +74,7 @@ jobs:
       integrations-dify: ${{ steps.filter.outputs.integrations-dify }}
       integrations-gemini-spark: ${{ steps.filter.outputs.integrations-gemini-spark }}
       integrations-vapi: ${{ steps.filter.outputs.integrations-vapi }}
+      extensions-bank-api-keys: ${{ steps.filter.outputs.extensions-bank-api-keys }}
       integrations-flowise: ${{ steps.filter.outputs.integrations-flowise }}
       integrations-google-adk: ${{ steps.filter.outputs.integrations-google-adk }}
       integrations-obsidian: ${{ steps.filter.outputs.integrations-obsidian }}
@@ -232,6 +233,8 @@ jobs:
             - 'hindsight-integrations/gemini-spark/**'
           integrations-vapi:
             - 'hindsight-integrations/vapi/**'
+          extensions-bank-api-keys:
+            - 'hindsight-extensions/bank-api-keys/**'
           integrations-flowise:
             - 'hindsight-integrations/flowise/**'
           integrations-google-adk:
@@ -3834,6 +3837,40 @@ jobs:
       working-directory: ./hindsight-integrations/vapi
       run: uv run pytest tests -v
 
+  test-bank-api-keys-extension:
+    needs: [detect-changes]
+    if: >-
+      github.event_name != 'pull_request_review' &&
+      (github.event_name == 'workflow_dispatch' ||
+      needs.detect-changes.outputs.extensions-bank-api-keys == 'true' ||
+      needs.detect-changes.outputs.ci == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        ref: ${{ github.event.pull_request.head.sha || '' }}
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
+        prune-cache: false
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version-file: ".python-version"
+
+    - name: Install dependencies
+      working-directory: ./hindsight-extensions/bank-api-keys
+      run: uv sync --frozen
+
+    - name: Run tests
+      working-directory: ./hindsight-extensions/bank-api-keys
+      run: uv run pytest tests -v
+
   test-superagent-integration:
     needs: [detect-changes]
     if: >-
@@ -5317,6 +5354,7 @@ jobs:
       - test-pipecat-integration
       - test-gemini-spark-integration
       - test-vapi-integration
+      - test-bank-api-keys-extension
       - test-google-adk-integration
       - test-roo-code-integration
       - build-control-plane

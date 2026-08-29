@@ -1,0 +1,19 @@
+version: 1
+
+# Admin key: full access to all banks. Prefer secret_env in production.
+admin:
+  secret_env: HINDSIGHT_API_BANK_API_KEYS_ADMIN_KEY
+
+keys:
+  - id: ci-pipeline
+    name: CI retain/recall
+    secret_env: CI_HINDSIGHT_KEY
+    banks:
+      - agent-alice
+      - shared-docs
+
+  - id: single-agent
+    name: One agent only
+    secret: "hsak_dev_only_replace_in_production"
+    banks:
+      - my-agent

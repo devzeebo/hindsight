@@ -1,0 +1,57 @@
+[project]
+name = "hindsight-bank-api-keys"
+version = "0.1.0"
+description = "YAML-configured bank-scoped API keys for Hindsight"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Vectorize", email = "support@vectorize.io" }]
+keywords = ["hindsight", "api-keys", "authentication", "multi-tenant"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "bcrypt>=4.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+hindsight-bank-api-keys = "hindsight_bank_api_keys.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/vectorize-io/hindsight"
+Repository = "https://github.com/vectorize-io/hindsight"
+Documentation = "https://github.com/vectorize-io/hindsight/tree/main/hindsight-extensions/bank-api-keys"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["hindsight_bank_api_keys"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+    "hindsight-api-slim",
+]
+
+[tool.uv.sources]
+hindsight-api-slim = { path = "../../hindsight-api-slim", editable = true }
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
